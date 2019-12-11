@@ -7,3 +7,22 @@
     margin-right: auto;
 
   }
+  .clubIcon{
+      width: 50px;
+      margin-top: 5px;
+      margin-left: 5px;
+      margin-bottom: 5px;
+  }
+  #to_details{
+      height: 60px;
+  }
+
+  .ui-popup{
+    height: 350px;
+    width: 350px;
+  }
+  .photo{
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+  }
