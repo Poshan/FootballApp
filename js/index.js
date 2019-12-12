@@ -14,6 +14,12 @@ const mapPlayerType = {
     "Midfielders": "MF",
     "Forwards": "FW"
 };
+const mapBackground = {
+    "Goalkeepers": "images/goalkeeper.jpg",
+    "Defenders": "images/defender.png",
+    "Midfielders": "images/midfielder.png",
+    "Forwards": "images/forward.png"
+}
 
 
 //onclick of refresh button
@@ -30,7 +36,7 @@ $(document).on("click", "#refresh", event => {
         APIkey: footballApiKey
     });
     // debugger;
-
+    
     $.getJSON(requestUrl, data => {
         clubs = data;
         $("#clubList").empty();
@@ -115,25 +121,63 @@ $(document).on('pagebeforeshow', '#detailsPage', function () {
                     url: getPlayerStat,
                     dataType: "json",
                     success: function (data) {
-                        // debugger;
+                        debugger;
                         let playerId = data[0].player_key;
                         let playerName = data[0].player_name;
                         let playerAge = data[0].player_age;
                         let playerType = data[0].player_type;
                         let playerCountry = data[0].player_country;
+                        let imageUrl = mapBackground[playerType];
                         // let playerAge = data[0].player_age
                         closebtn = '<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>';
-                        header = `<div data-role="header"><h2>${playerName} (${mapPlayerType[playerType]}) </h2></div>`;
+                        header = `<div><h2>${playerName} (${mapPlayerType[playerType]}) </h2></div>`;
                         img = `<img src='https://raw.githubusercontent.com/gosquared/flags/master/flags/flags/flat/64/${playerCountry}.png' class="photo">`;
-                        popup = `<div data-role="popup" id="popup-${playerId}" data-short="${playerId}" data-theme="none" data-overlay-theme="a" data-corners="false" data-tolerance="15">
-                        </div>`;
-                        playersDetails = `<h2>${playerName}</h2>
-                        <h3></h3>`
+                        popup = `<div data-role="popup" id="popup-${playerId}" data-short="${playerId}" data-theme="none" data-overlay-theme="b" data-corners="false" data-tolerance="15"></div>`;
+                        playersDetails = `<div>
+                        <h3>Playing Position: ${playerType}</h3>
+                        <h3>Age: ${playerAge}</h3></div>
+                        <table class = "greyGridTable">
+                        <thead>
+                           <tr>
+                             <th>Statistics</th>
+                             <th>Value</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Matches Played</td>
+                                <td>
+                                ${data[0].player_match_played}
+                                </td>
+                            </tr>
+                            <tr>
+                            <td>Goal Scored</td>
+                            <td>
+                                ${data[0].player_goals}
+                                </td>
+                            </tr>
+                            <tr>
+                            <td>Yellow Cards</td>
+                            <td>
+                                ${data[0].player_yellow_cards}
+                                </td>
+                            </tr>
+                            <tr>
+                            <td>Goal Scored</td>
+                            <td>
+                                ${data[0].player_red_cards}
+                                </td>
+                            </tr>
+                        </tbody>
+                        </table>
+                        `;
                         $(header).appendTo($(popup)
                                 .appendTo($.mobile.activePage)
                                 .popup())
-                            .toolbar().after(playersDetails)
+                            .after(playersDetails)
                         .after(img);
+
+                        // $('.ui-popup').css('background-image', 'url(' + imageUrl + ')');
 
                         $(".photo", "#popup-" + playerId).load(function () {
                             // Open the popup

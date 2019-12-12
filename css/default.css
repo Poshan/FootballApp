@@ -1,28 +1,96 @@
-#footer{
+#footer {
     display: block;
 }
+
 .center {
     display: block;
     margin-left: auto;
     margin-right: auto;
 
-  }
-  .clubIcon{
-      width: 50px;
-      margin-top: 5px;
-      margin-left: 5px;
-      margin-bottom: 5px;
-  }
-  #to_details{
-      height: 60px;
-  }
+}
 
-  .ui-popup{
-    height: 350px;
+.clubIcon {
+    width: 50px;
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+#to_details {
+    height: 60px;
+}
+
+.ui-popup {
+    height: 450px;
     width: 350px;
+    background-color: #ffffff;
+    border-radius: 25px;
+    z-index: 999;
+    background-size: cover;
+
+}
+
+.photo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50%;
+    background-color: #103050;
+}
+
+h2 {
+    text-align: center;
+    background-color: #ffaa00;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+
+}
+
+h3 {
+    text-align: center;
+    font-weight: bolder;
+}
+
+
+/*table styles*/
+table.greyGridTable {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    border: 2px solid #FFFFFF;
+    width: 100%;
+    text-align: center;
+    border-collapse: collapse;
   }
-  .photo{
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
+  table.greyGridTable td, table.greyGridTable th {
+    border: 1px solid #FFFFFF;
+    padding: 3px 4px;
+  }
+  table.greyGridTable tbody td {
+    font-size: 20px;
+  }
+  table.greyGridTable td:nth-child(even) {
+    background: #EBEBEB;
+  }
+  table.greyGridTable thead {
+    background: #FFFFFF;
+    border-bottom: 4px solid #333333;
+  }
+  table.greyGridTable thead th {
+    font-size: 20px;
+    font-weight: bolder;
+    color: #333333;
+    text-align: center;
+    border-left: 2px solid #333333;
+  }
+  table.greyGridTable thead th:first-child {
+    border-left: none;
+  }
+  
+  table.greyGridTable tfoot {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333333;
+    border-top: 4px solid #333333;
+  }
+  table.greyGridTable tfoot td {
+    font-size: 14px;
   }
