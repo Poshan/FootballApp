@@ -14,11 +14,12 @@
     margin-top: 5px;
     margin-left: 5px;
     margin-bottom: 5px;
-}
+} 
 
 #to_details {
     height: 70px;
 }
+
 
 .ui-popup {
     height: 450px;
@@ -40,7 +41,6 @@
 
 h2 {
     text-align: center;
-    background-color: #ffaa00;
     border-top-left-radius: 25px;
     border-top-right-radius: 25px;
 
@@ -54,11 +54,11 @@ h3 {
 
 /*table styles*/
 table.greyGridTable {
-    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
     border: 2px solid #FFFFFF;
     width: 100%;
     text-align: center;
     border-collapse: collapse;
+    font-family: monospace;
   }
   table.greyGridTable td, table.greyGridTable th {
     border: 1px solid #FFFFFF;
@@ -94,3 +94,33 @@ table.greyGridTable {
   table.greyGridTable tfoot td {
     font-size: 14px;
   }
+
+  /*MapPage styling*/
+#mapPage *{
+    box-sizing: content-box;
+}
+
+#mapPage{
+    margin:0;
+    padding: 0;
+}
+
+/* .grid-container{
+    display: grid;
+    grid-template-columns: 30vw 80vw;
+    grid-template-rows: 50vh;
+}
+
+.sidebar{
+    margin-left: 15px;
+
+} */
+
+/* .sidebar > input{
+    display: block;
+} */
+
+.map {
+height: 400px;
+width: 100%;
+}
