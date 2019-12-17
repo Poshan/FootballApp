@@ -3,14 +3,17 @@ let currentClub;
 let clubs;
 let players;
 let currentPlayer;
+const PLOT_WIDTH = 370;
+const PLOT_HEIGHT = 350;
+let svg, chart;
+
 
 let geojsonHeader = {
     "type": "FeatureCollection",
     "features": []
 };
-
+let map = null;
 //openlayers imports
-
 
 
 
@@ -87,8 +90,10 @@ const populateDetails = (cClub) => {
     return new Promise(function (resolve) {
 
         players = cClub.allDetails[0].players;
-
+        // console.log(currentClub);
+        
         let html = '';
+        html += `<h3>Players</h3>`;
         $.each(players, function (index, player) {
             let playerId = player.player_key;
             let playerName = player.player_name;
@@ -164,7 +169,7 @@ const createPopupHTML = (currentPlayer) => {
         getCountryFlag(playerCountry).then(function (result) {
             img = result;
             popup = `<div data-role="popup" id="popup-${playerId}" data-short="${playerId}" data-theme="none" data-overlay-theme="b" data-corners="false" data-tolerance="15"></div>`;
-            playersDetails = `<div><h3>Playing Position: ${playerType}</h3>
+            playersDetails = `<div><h3>Country: ${playerCountry}</h3><h3>Playing Position: ${playerType}</h3>
                         <h3>Age: ${playerAge}</h3></div>
                         <table class="greyGridTable"><thead><tr><th>Statistics</th><th>Value</th></tr></thead>
                         <tbody><tr><td>Matches Played</td><td>${matchesPlayed}</td></tr>
@@ -207,7 +212,6 @@ const attachEvent = (classA) => {
 
 $(document).on('click', '#to_details', function (e) {
     $.mobile.loading("show");
-
     e.preventDefault();
 
     e.stopImmediatePropagation();
@@ -217,16 +221,18 @@ $(document).on('click', '#to_details', function (e) {
     let clubIndex = e.target.getAttribute("data-id");
 
     currentClub = clubs[clubIndex];
-
+    // console.log(currentClub);
+        // populateCoach(currentClub);
     populateDetails(currentClub).then(function (result) {
         $('#players').append(result);
-
+        // $("#coachList").listview('refresh');
         $('#players').listview('refresh');
 
         //now attach the listeners
         attachEvent('.playersInd');
     });
-
+    $("#clubName").empty();
+    $("#clubName").append(currentClub.team_name);
     $.mobile.changePage("#detailsPage", {
         transition: 'slide'
     });
@@ -235,13 +241,9 @@ $(document).on('click', '#to_details', function (e) {
 
 });
 
-
-//onclick of refresh button
-
-$(document).on("click", "#refresh", async function (event) {
-
+const getClubsandPopulate = async() => {
     event.preventDefault();
-
+    
     $("#clubList").empty();
 
     $.mobile.loading("show");
@@ -255,14 +257,25 @@ $(document).on("click", "#refresh", async function (event) {
     populateClubs(clubs, '#clubList');
 
     $.mobile.loading("hide");
+}
+
+
+$(document).on("pagebeforeshow", "#page1", async function (event) {
+    // getClubsandPopulate();
+    $('#refresh').on("click",function(){
+        getClubsandPopulate();
+    })
 
 });
+
 
 function getMap() {
     if ($('.ol-viewport').length != 0) {
         $('.ol-viewport').remove();
     }
-    let map = new ol.Map({
+
+    map = null;
+    map = new ol.Map({
         target: 'map',
         view: new ol.View({
             projection: 'EPSG:4326',
@@ -349,7 +362,7 @@ const getCountries = (player) => {
             country = `Congo (Democratic Republic of the)`;
         }
 
-        let getLocation = `https://restcountries.eu/rest/v2/name/${encodeURIComponent(country)}?fullText=true`;
+        let getLocation = `https://restcountries.eu/rest/v2/name/${encodeURIComponent(country)}`;
         $.ajax({
             url: getLocation,
             success: function (data) {
@@ -399,32 +412,72 @@ const countRegions = (geojsonH) => {
         regionArray.push(indPlayer.properties.Region);
     });
 
-    let regionCount =[];
+    let regionCount = [];
 
     //counting the number of regions
     setOcc = new Set(regionArray)
     arrOcc = [...setOcc]
     arrNumberOcc = arrOcc.map(occ => regionArray.filter(e => e === occ).length);
-    for (let i =0; i< arrOcc.length; i++){
+
+    for (let i = 0; i < arrOcc.length; i++) {
         regionCount.push({
             'Region': arrOcc[i],
-            'Count': arrNumberOcc[i] 
+            'Count': arrNumberOcc[i]
         })
     }
     return regionCount;
 }
 
+//dimple js charts
+const initPlot = (el_id = "body") =>{
+    svg = dimple.newSvg(el_id, PLOT_WIDTH, PLOT_HEIGHT);
+  }
+
+
+function drawPlot(dataset, measurement, type) {
+    clearPlot();
+  
+    chart = new dimple.chart(svg, dataset);
+  
+    let x = chart.addCategoryAxis("x", "Region");
+    
+    x.addOrderRule("Count");
+
+    chart.addMeasureAxis("y", measurement);
+ 
+    chart.addSeries(type, dimple.plot.bar);
+  
+    chart.draw();
+  }
+  
+  /*
+    D3.js code
+  */
+  function clearPlot() {
+    if (chart != undefined)
+      d3.select("g").remove();
+  }
+
+  //end of dimple charts
+
 const charts = (players) => {
-    console.log(`the current club is ${geojsonHeader}`);
+    // console.log(`the current club is ${geojsonHeader}`);
+    
+    if ($(svg)){
+        $('svg').remove();
+    }
+    initPlot('.mycharts');
     let regionCount = countRegions(geojsonHeader);
-    console.log(regionCount);
+    drawPlot(regionCount, "Count","bar");
 }
 
 $(document).on('pageshow', '#mapPage', async function () {
+    $("#clubNameMap").empty();
+    $("#clubNameMap").append(`${currentClub.team_name} Players Map`);
     //checking if any map is already there!!! if yes remove it
+
     let mapOL = getMap();
     // console.log(currentClub);
-    // debugger;
     let players = currentClub.allDetails[0].players;
     // console.log(players);
 
@@ -436,7 +489,7 @@ $(document).on('pageshow', '#mapPage', async function () {
 
     let geojsonPlayersPromise = players.map(player => getPlayersLayer(player));
 
-    console.log(geojsonHeader);
+    // console.log(geojsonHeader);
     await Promise.all(geojsonPlayersPromise);
 
     //add the geojsonHeader to map
@@ -463,3 +516,4 @@ $(document).on('pageshow', '#mapPage', async function () {
 
 
 })
+
